@@ -11,8 +11,14 @@ public class App {
 
         JFrame frame = new JFrame("Space Invaders");
         frame.setVisible(true);
+        frame.setSize(boardWidth, boardHeight);
         frame.setLocationRelativeTo(null); // Ouverture de la fenêtre au centre de l'écran
         frame.setResizable(false); // Taille statique
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+
+        SpaceInvaders spaceInvaders = new SpaceInvaders(); //Instanciation d'un JPanel custom
+        frame.add(spaceInvaders);
+        frame.pack();
+        frame.setVisible(true);
     }
 }
