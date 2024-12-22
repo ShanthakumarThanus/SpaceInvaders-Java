@@ -10,7 +10,6 @@ public class App {
         int boardHeight = tileSize * rows; // = 512px
 
         JFrame frame = new JFrame("Space Invaders");
-        frame.setVisible(true);
         frame.setSize(boardWidth, boardHeight);
         frame.setLocationRelativeTo(null); // Ouverture de la fenêtre au centre de l'écran
         frame.setResizable(false); // Taille statique
