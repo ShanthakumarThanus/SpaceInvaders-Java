@@ -42,6 +42,10 @@ public class SpaceInvaders extends JPanel {
     //vaisseau
     int largeurVaisseau = tileSize*2; //64px
     int hauteurVaisseau = tileSize; //32px
+    int vaisseauX = tileSize*columns/2 - tileSize;
+    int vaisseauY = boardHeight - tileSize*2;
+
+    Block vaisseau;
 
     SpaceInvaders() {
         setPreferredSize(new Dimension(boardWidth, boardHeight));
@@ -59,5 +63,7 @@ public class SpaceInvaders extends JPanel {
         listeImgAlien.add(imgAlienCyan);
         listeImgAlien.add(imgAlienMagenta);
         listeImgAlien.add(imgAlienJaune);
+
+        vaisseau = new Block(vaisseauX, vaisseauY, largeurVaisseau, hauteurVaisseau, imgVaisseau);
     }
 }
