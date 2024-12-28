@@ -5,7 +5,8 @@ import java.util.ArrayList;
 import java.util.Random;
 import javax.swing.*;
 
-public class SpaceInvaders extends JPanel {
+public class SpaceInvaders extends JPanel implements ActionListener, KeyListener {
+
     //classe pour la position du vaisseau / alien / balles
     class Block {
         int x;
@@ -44,12 +45,16 @@ public class SpaceInvaders extends JPanel {
     int hauteurVaisseau = tileSize; //32px
     int vaisseauX = tileSize*columns/2 - tileSize;
     int vaisseauY = boardHeight - tileSize*2;
-
+    int vaisseauVelocityX = tileSize; // déplacement position axe x du vaisseau
     Block vaisseau;
+
+    Timer gameLoop; // boucle du jeu pour update chaque mouvement
 
     SpaceInvaders() {
         setPreferredSize(new Dimension(boardWidth, boardHeight));
         setBackground(Color.black);
+        setFocusable(true);
+        addKeyListener(this);
 
         //chargement des images
         imgVaisseau = new ImageIcon(getClass().getResource("./ship.png")).getImage();
@@ -65,5 +70,39 @@ public class SpaceInvaders extends JPanel {
         listeImgAlien.add(imgAlienJaune);
 
         vaisseau = new Block(vaisseauX, vaisseauY, largeurVaisseau, hauteurVaisseau, imgVaisseau);
+
+        //timer du jeu
+        gameLoop = new Timer(1000/60, this); // appel de la classe en elle même, 60 fois par secondes
+        gameLoop.start();
+    }
+
+    public void paintComponent(Graphics g) {
+        super.paintComponent(g);
+        draw(g);
+    }
+
+    public void draw(Graphics g) {
+        g.drawImage(vaisseau.img, vaisseau.x, vaisseau.y, vaisseau.width, vaisseau.height, null);
+    }
+
+    @Override
+    public void actionPerformed(ActionEvent e) {
+        repaint();
+    }
+
+    @Override
+    public void keyTyped(KeyEvent e) {}
+
+    @Override
+    public void keyPressed(KeyEvent e) {}
+
+    @Override
+    public void keyReleased(KeyEvent e) {
+        if (e.getKeyCode() == KeyEvent.VK_LEFT) {
+            vaisseau.x -= vaisseauVelocityX; // bouge à gauche de 1 bloc
+        }
+        else if (e.getKeyCode() == KeyEvent.VK_RIGHT) {
+            vaisseau.x += vaisseauVelocityX; // bouge à droite de 1 bloc
+        }
     }
 }

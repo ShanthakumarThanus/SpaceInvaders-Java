@@ -18,6 +18,7 @@ public class App {
         SpaceInvaders spaceInvaders = new SpaceInvaders(); //Instanciation d'un JPanel custom
         frame.add(spaceInvaders);
         frame.pack();
+        spaceInvaders.requestFocus();
         frame.setVisible(true);
     }
 }
