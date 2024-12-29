@@ -48,6 +48,17 @@ public class SpaceInvaders extends JPanel implements ActionListener, KeyListener
     int vaisseauVelocityX = tileSize; // déplacement position axe x du vaisseau
     Block vaisseau;
 
+    //aliens
+    ArrayList<Block> listeAliens;
+    int largeurAlien = tileSize*2;
+    int hauteurAlien = tileSize;
+    int alienX = tileSize;
+    int alienY = tileSize;
+
+    int alienRows = 2; // nb de ligne d'aliens
+    int alienColumns = 3; // nb de colonne d'aliens
+    int alienCount = 0; // nb d'alien à battre
+
     Timer gameLoop; // boucle du jeu pour update chaque mouvement
 
     SpaceInvaders() {
@@ -70,9 +81,11 @@ public class SpaceInvaders extends JPanel implements ActionListener, KeyListener
         listeImgAlien.add(imgAlienJaune);
 
         vaisseau = new Block(vaisseauX, vaisseauY, largeurVaisseau, hauteurVaisseau, imgVaisseau);
+        listeAliens = new ArrayList<Block>();
 
         //timer du jeu
         gameLoop = new Timer(1000/60, this); // appel de la classe en elle même, 60 fois par secondes
+        creationAliens();
         gameLoop.start();
     }
 
@@ -82,7 +95,34 @@ public class SpaceInvaders extends JPanel implements ActionListener, KeyListener
     }
 
     public void draw(Graphics g) {
+        // vaisseau
         g.drawImage(vaisseau.img, vaisseau.x, vaisseau.y, vaisseau.width, vaisseau.height, null);
+
+        // aliens
+        for (int i = 0; i < listeAliens.size(); i++) {
+            Block alien = listeAliens.get(i);
+            if (alien.alive) {
+                g.drawImage(alien.img, alien.x, alien.y, alien.width, alien.height, null);
+            }
+        }
+    }
+
+    public void creationAliens() {
+        Random random = new Random(); // sélection d'alien de couleur aléatoire
+        for (int r = 0; r < alienRows; r++) {
+            for (int c = 0; c < alienColumns; c++) {
+                int randomImgIndex = random.nextInt(listeImgAlien.size());
+                Block alien = new Block(
+                        alienX + c*largeurAlien,
+                        alienY + r*hauteurAlien,
+                        largeurAlien,
+                        hauteurAlien,
+                        listeImgAlien.get(randomImgIndex)
+                );
+                listeAliens.add(alien);
+            }
+        }
+        alienCount = listeAliens.size();
     }
 
     @Override
@@ -98,10 +138,10 @@ public class SpaceInvaders extends JPanel implements ActionListener, KeyListener
 
     @Override
     public void keyReleased(KeyEvent e) {
-        if (e.getKeyCode() == KeyEvent.VK_LEFT) {
+        if (e.getKeyCode() == KeyEvent.VK_LEFT && vaisseau.x - vaisseauVelocityX >= 0) {
             vaisseau.x -= vaisseauVelocityX; // bouge à gauche de 1 bloc
         }
-        else if (e.getKeyCode() == KeyEvent.VK_RIGHT) {
+        else if (e.getKeyCode() == KeyEvent.VK_RIGHT && vaisseau.x + largeurVaisseau + vaisseauVelocityX <= boardWidth) {
             vaisseau.x += vaisseauVelocityX; // bouge à droite de 1 bloc
         }
     }
