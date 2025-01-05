@@ -57,9 +57,19 @@ public class SpaceInvaders extends JPanel implements ActionListener, KeyListener
 
     int alienRows = 2; // nb de ligne d'aliens
     int alienColumns = 3; // nb de colonne d'aliens
-    int alienCount = 0; // nb d'alien à battre
+    int alienCount = 0; // score
+    int alienVelocityX = 1; //vitesse de déplacement de l'alien
+
+    //balles
+    ArrayList<Block> listeBalle;
+    int largeurBalle = tileSize/8;
+    int hauteurBalle = tileSize/2;
+    int balleVelocityY = -10; //vitesse de déplacement d'une balle
 
     Timer gameLoop; // boucle du jeu pour update chaque mouvement
+
+    //balles pour tirer sur les aliens
+
 
     SpaceInvaders() {
         setPreferredSize(new Dimension(boardWidth, boardHeight));
@@ -82,6 +92,7 @@ public class SpaceInvaders extends JPanel implements ActionListener, KeyListener
 
         vaisseau = new Block(vaisseauX, vaisseauY, largeurVaisseau, hauteurVaisseau, imgVaisseau);
         listeAliens = new ArrayList<Block>();
+        listeBalle = new ArrayList<Block>();
 
         //timer du jeu
         gameLoop = new Timer(1000/60, this); // appel de la classe en elle même, 60 fois par secondes
@@ -105,6 +116,43 @@ public class SpaceInvaders extends JPanel implements ActionListener, KeyListener
                 g.drawImage(alien.img, alien.x, alien.y, alien.width, alien.height, null);
             }
         }
+
+        //balle
+        g.setColor(Color.CYAN);
+        for (int i = 0; i < listeBalle.size(); i++) {
+            Block balle = listeBalle.get(i);
+            if (!balle.used) {
+                //g.drawRect(balle.x, balle.y, balle.width, balle.height);
+                g.fillRect(balle.x, balle.y, balle.width, balle.height);
+            }
+        }
+    }
+
+    public void move() {
+        //aliens
+        for (int i = 0; i < listeAliens.size(); i++) {
+            Block alien = listeAliens.get(i);
+            if (alien.alive) {
+                alien.x += alienVelocityX;
+
+                //si l'alien touche les bords
+                if (alien.x + largeurAlien >= boardWidth || alien.x <= 0) {
+                    alienVelocityX *= -1;
+                    alien.x += alienVelocityX * 2;
+
+                    //changement de ligne vers le bas
+                    for (int j = 0; j < listeAliens.size(); j++) {
+                        listeAliens.get(j).y += hauteurAlien;
+                    }
+                }
+            }
+        }
+
+        //balles
+        for (int i = 0; i < listeBalle.size(); i++) {
+            Block balle = listeBalle.get(i);
+            balle.y += balleVelocityY;
+        }
     }
 
     public void creationAliens() {
@@ -127,6 +175,7 @@ public class SpaceInvaders extends JPanel implements ActionListener, KeyListener
 
     @Override
     public void actionPerformed(ActionEvent e) {
+        move();
         repaint();
     }
 
@@ -143,6 +192,10 @@ public class SpaceInvaders extends JPanel implements ActionListener, KeyListener
         }
         else if (e.getKeyCode() == KeyEvent.VK_RIGHT && vaisseau.x + largeurVaisseau + vaisseauVelocityX <= boardWidth) {
             vaisseau.x += vaisseauVelocityX; // bouge à droite de 1 bloc
+        }
+        else if (e.getKeyCode() == KeyEvent.VK_SPACE) {
+            Block balle = new Block(vaisseau.x + largeurVaisseau*15/32, vaisseau.y, largeurBalle, hauteurBalle, null);
+            listeBalle.add(balle);
         }
     }
 }
