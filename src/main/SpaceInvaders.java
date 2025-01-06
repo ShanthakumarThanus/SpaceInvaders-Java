@@ -152,6 +152,16 @@ public class SpaceInvaders extends JPanel implements ActionListener, KeyListener
         for (int i = 0; i < listeBalle.size(); i++) {
             Block balle = listeBalle.get(i);
             balle.y += balleVelocityY;
+
+            //collision d'une balle vers l'objet
+            for (int j = 0; j < listeAliens.size(); j++) {
+                Block alien = listeAliens.get(j);
+                if (!balle.used && alien.alive && detectCollision(balle, alien)) {
+                    balle.used = true;
+                    alien.alive = false;
+                    alienCount--;
+                }
+            }
         }
     }
 
@@ -171,6 +181,14 @@ public class SpaceInvaders extends JPanel implements ActionListener, KeyListener
             }
         }
         alienCount = listeAliens.size();
+    }
+
+    //fonction permettant de détecter les collisions entre balle et objet
+    public boolean detectCollision(Block a, Block b) {
+        return a.x < b.x + b.width &&
+                a.x + a.width > b.x &&
+                a.y < b.y + b.height &&
+                a.y + a.height > b.y;
     }
 
     @Override
