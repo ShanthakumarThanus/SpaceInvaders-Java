@@ -37,8 +37,8 @@ Compiler et exécuter :
     Appuye sur n'importe quel bouton pour recommencer et battre ton score !
 
 🖼️ Aperçu du jeu
-![image](https://github.com/user-attachments/assets/db0d0d2e-e5a8-4bfa-b2e7-e09912b2bf47)
 
+![image](https://github.com/user-attachments/assets/8134363e-c88d-4c09-8808-b067d9bc6f28)
 
 Ce projet est sous licence MIT. Vous êtes libre de l'utiliser, de le modifier et de le distribuer, sous réserve de mentionner l'auteur original.
 🧑‍💻 Auteur
