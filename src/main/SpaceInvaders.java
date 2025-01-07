@@ -68,8 +68,8 @@ public class SpaceInvaders extends JPanel implements ActionListener, KeyListener
 
     Timer gameLoop; // boucle du jeu pour update chaque mouvement
 
-    //balles pour tirer sur les aliens
-
+    int score = 0;
+    boolean gameOver = false;
 
     SpaceInvaders() {
         setPreferredSize(new Dimension(boardWidth, boardHeight));
@@ -126,6 +126,16 @@ public class SpaceInvaders extends JPanel implements ActionListener, KeyListener
                 g.fillRect(balle.x, balle.y, balle.width, balle.height);
             }
         }
+
+        //affichage du score
+        g.setColor(Color.red);
+        g.setFont(new Font("Arial", Font.PLAIN, 32));
+        if (gameOver) {
+            g.drawString("Perdu ! :" + String.valueOf(score), 10, 35);
+        }
+        else {
+            g.drawString(String.valueOf(score), 10, 35);
+        }
     }
 
     public void move() {
@@ -140,12 +150,17 @@ public class SpaceInvaders extends JPanel implements ActionListener, KeyListener
                     alienVelocityX *= -1;
                     alien.x += alienVelocityX * 2;
 
-                    //changement de ligne vers le bas
+
+                    //descendre d'une ligne vers le bas
                     for (int j = 0; j < listeAliens.size(); j++) {
                         listeAliens.get(j).y += hauteurAlien;
                     }
                 }
-            }
+
+                if (alien.y >= vaisseau.y) {
+                    gameOver = true;
+                }
+             }
         }
 
         //balles
@@ -160,8 +175,26 @@ public class SpaceInvaders extends JPanel implements ActionListener, KeyListener
                     balle.used = true;
                     alien.alive = false;
                     alienCount--;
+                    score += 100;
                 }
             }
+        }
+
+        //supprimer les balles utilisées pour ne pas surcharger le programme
+        while (listeBalle.size() > 0 && (listeBalle.get(0).used || listeBalle.get(0).y < 0)) {
+            listeBalle.remove(0);
+        }
+
+        //niveau prochain
+        if (alienCount == 0) {
+            //incrémentation du nombre d'aliens dans un colonne et ligne par 1
+            score += alienColumns * alienRows * 100; // point bonus lorsque l'on level up d'un niveau
+            alienColumns = Math.min(alienColumns + 1, columns/2 - 2); //limite de colonne à 6
+            alienRows = Math.min(alienRows + 1, rows - 6); // limite de ligne à 20
+            listeAliens.clear();
+            listeBalle.clear();
+            alienVelocityX = 1;
+            creationAliens();
         }
     }
 
@@ -195,6 +228,9 @@ public class SpaceInvaders extends JPanel implements ActionListener, KeyListener
     public void actionPerformed(ActionEvent e) {
         move();
         repaint();
+        if (gameOver) {
+           gameLoop.stop();
+        }
     }
 
     @Override
@@ -205,7 +241,19 @@ public class SpaceInvaders extends JPanel implements ActionListener, KeyListener
 
     @Override
     public void keyReleased(KeyEvent e) {
-        if (e.getKeyCode() == KeyEvent.VK_LEFT && vaisseau.x - vaisseauVelocityX >= 0) {
+        if (gameOver) {
+            vaisseau.x = vaisseauX;
+            listeAliens.clear();
+            listeBalle.clear();
+            score = 0;
+            alienVelocityX = 1;
+            alienColumns = 3;
+            alienRows = 2;
+            gameOver = false;
+            creationAliens();
+            gameLoop.start();
+        }
+        else if (e.getKeyCode() == KeyEvent.VK_LEFT && vaisseau.x - vaisseauVelocityX >= 0) {
             vaisseau.x -= vaisseauVelocityX; // bouge à gauche de 1 bloc
         }
         else if (e.getKeyCode() == KeyEvent.VK_RIGHT && vaisseau.x + largeurVaisseau + vaisseauVelocityX <= boardWidth) {
